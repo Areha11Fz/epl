@@ -5,6 +5,7 @@ const LEAGUE_ID = 2021;
 
 const ENDPOINT_COMPETITION = `${BASE_URL}competitions/${LEAGUE_ID}/standings`;
 const ENDPOINT_TEAMLIST = `${BASE_URL}competitions/${LEAGUE_ID}/teams`;
+const ENDPOINT_TEAMDETAILS = `${BASE_URL}teams/`;
 
 const fetchAPI = url => {
     return fetch(url, {
@@ -68,6 +69,30 @@ function getAllTeams() {
         })
 }
 
+function getTeamDetails() {
+    var urlParams = new URLSearchParams(window.location.search);
+    var idParam = urlParams.get("id");
+    
+    if ("caches" in window) {
+        caches.match(ENDPOINT_TEAMDETAILS + idParam).then(function (response) {
+            if (response) {
+                response.json().then(function (data) {
+                    console.log("Team Details: " + data);
+                    showTeamDetails(data);
+                })
+            }
+        })
+    }
+
+    fetchAPI(ENDPOINT_TEAMDETAILS + idParam)
+        .then(data => {
+            showTeamDetails(data);
+        })
+        .catch(error => {
+            console.log(error)
+        })
+}
+
 function showStanding(data) {
     let standings = "";
     let standingElement =  document.getElementById("homeStandings");
@@ -122,11 +147,10 @@ function showTeam(data) {
         teams += `
                 <tr>
                     <td><img src="${team.crestUrl.replace(/^http:\/\//i, 'https://')}" width="30px" alt="badge"/></td>
-                    <td>${team.name}</td>
+                    <td><a href="./teamdetails.html?id=${team.id}">${team.name}</a></td>
                     <td>${team.founded}</td>
                     <td>${team.clubColors}</td>
                     <td>${team.venue}</td>
-                    <td>${team.website}</td>
                 </tr>
         `;
     });
@@ -142,11 +166,78 @@ function showTeam(data) {
                             <th>Founded</th>
                             <th>Club Colors</th>
                             <th>Venue</th>
-                            <th>Website</th>
                         </tr>
                      </thead>
                     <tbody id="teams">
                         ${teams}
+                    </tbody>
+                </table>
+                
+                </div>
+    `;
+}
+
+function showTeamDetails(data) {
+    let squads = "";
+    let teamDetailsElement =  document.getElementById("teamDetails");
+
+    data.squad.forEach(function (squad) {
+        squads += `
+                <tr>
+                    <td>${squad.name}</td>
+                    <td>${squad.position}</td>
+                    <td>${squad.nationality}</td>
+                    <td>${squad.role}</td>
+                </tr>
+        `;
+    });
+
+     teamDetailsElement.innerHTML = `
+                <div class="center-align">
+                    <img src="${data.crestUrl.replace(/^http:\/\//i, 'https://')}" width="100px" alt="badge"/>
+                    <h4 class="header center orange-text">${data.name}</h4>
+                </div>
+
+                <div class="card" style="padding-left: 24px; padding-right: 24px; margin-top: 30px;">
+
+                <table class="centered responsive-table">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Founded</th>
+                            <th>Club Colors</th>
+                            <th>Venue</th>
+                        </tr>
+                    </thead>
+                    <tbody id="details">
+                        <tr>
+                            <td>${data.name}</td>
+                            <td>${data.founded}</td>
+                            <td>${data.clubColors}</td>
+                            <td>${data.venue}</td>
+                        </tr>
+                    </tbody>
+                </table>
+                                
+                </div>
+
+                <div class="center-align">
+                    <h4 class="header center orange-text">Squad</h4>
+                </div>
+
+                <div class="card" style="padding-left: 24px; padding-right: 24px; margin-top: 30px;">
+
+                <table class="striped responsive-table">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Position</th>
+                            <th>Nationality</th>
+                            <th>Role</th>
+                        </tr>
+                     </thead>
+                    <tbody id="squads">
+                        ${squads}
                     </tbody>
                 </table>
                 

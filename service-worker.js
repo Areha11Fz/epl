@@ -7,6 +7,7 @@ var urlsToCache = [
     "/icon/icon-96.png",
     "/icon/icon-192.png",
     "/js/api.js",
+    "/js/db.js",
     "/js/idb.js",
     "/js/materialize.min.js",
     "/js/nav.js",
@@ -15,7 +16,8 @@ var urlsToCache = [
     "/index.html",
     "/manifest.json",
     "/nav.html",
-    "/service-worker.js"
+    "/service-worker.js",
+    "/teamdetails.html",
 ];
 
 self.addEventListener("install", function (event) {
@@ -40,6 +42,8 @@ self.addEventListener("activate", function (event) {
             );
         })
     );
+
+    event.waitUntil(self.clients.claim());
 });
 
 self.addEventListener("fetch", function(event) {
