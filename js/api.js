@@ -70,27 +70,31 @@ function getAllTeams() {
 }
 
 function getTeamDetails() {
-    var urlParams = new URLSearchParams(window.location.search);
-    var idParam = urlParams.get("id");
-    
-    if ("caches" in window) {
-        caches.match(ENDPOINT_TEAMDETAILS + idParam).then(function (response) {
-            if (response) {
-                response.json().then(function (data) {
-                    console.log("Team Details: " + data);
-                    showTeamDetails(data);
-                })
-            }
-        })
-    }
+    return new Promise(function(resolve, reject) {
+        var urlParams = new URLSearchParams(window.location.search);
+        var idParam = urlParams.get("id");
+        
+        if ("caches" in window) {
+            caches.match(ENDPOINT_TEAMDETAILS + idParam).then(function (response) {
+                if (response) {
+                    response.json().then(function (data) {
+                        console.log("Team Details: " + data);
+                        showTeamDetails(data);
+                        resolve(data);
+                    })
+                }
+            })
+        }
 
-    fetchAPI(ENDPOINT_TEAMDETAILS + idParam)
-        .then(data => {
-            showTeamDetails(data);
-        })
-        .catch(error => {
-            console.log(error)
-        })
+        fetchAPI(ENDPOINT_TEAMDETAILS + idParam)
+            .then(data => {
+                showTeamDetails(data);
+                resolve(data);
+            })
+            .catch(error => {
+                console.log(error)
+            })
+    });
 }
 
 function showStanding(data) {
@@ -244,3 +248,144 @@ function showTeamDetails(data) {
                 </div>
     `;
 }
+
+function getSavedTeams() {
+    getAll().then(function(teams) {
+      console.log(teams);
+
+      let listTeam = "";
+      let savedElement =  document.getElementById("savedTeam");
+
+      teams.forEach(function(team) {
+  
+        listTeam += `
+                    <tr>
+                    <td><img src="${team.crestUrl.replace(/^http:\/\//i, 'https://')}" width="30px" alt="badge"/></td>
+                    <td><a href="./teamdetails.html?id=${team.id}&saved=true">${team.name}</a></td>
+                    <td>${team.founded}</td>
+                    <td>${team.clubColors}</td>
+                    <td>${team.venue}</td>
+                    </tr>
+                  `;
+      });
+
+      savedElement.innerHTML = `
+                    <div class="card" style="padding-left: 24px; padding-right: 24px; margin-top: 30px;">
+
+                    <table class="striped responsive-table">
+                        <thead>
+                            <tr>
+                                <th></th>
+                                <th>Team Name</th>
+                                <th>Founded</th>
+                                <th>Club Colors</th>
+                                <th>Venue</th>
+                            </tr>
+                        </thead>
+                        <tbody id="teams">
+                            ${listTeam}
+                        </tbody>
+                    </table>
+                    
+                    </div>
+    `;
+    });
+}
+
+function getSavedTeamDetails() {
+        var urlParams = new URLSearchParams(window.location.search);
+        var idParam = urlParams.get("id");
+        
+        // getById(idParam).then(function (team) {
+        //     showSavedTeamDetails(team);
+        // });
+
+        getById(idParam).then(function(team) {
+            console.log(team);
+        });
+
+        // getById(idParam).then(function(team) {
+        //     detailHTML = '';
+        //     var detailHTML = `
+        //     ${team.name}
+        //   `;
+              // Sisipkan komponen card ke dalam elemen dengan id #content
+        // document.getElementById("body-content").innerHTML = detailHTML;
+        // });
+
+}
+
+// function showSavedTeamDetails(team){
+//     let savedElement =  document.getElementById("teamDetails");
+//     savedElement.innerHTML = `
+//         ${team.name}
+//     `;
+// }
+
+// function showSavedTeamDetails(team) {
+//     let squads = "";
+//     let teamDetailsElement =  document.getElementById("teamDetails");
+
+//     team.forEach(function (squad) {
+//         squads += `
+//                 <tr>
+//                     <td>${squad.name}</td>
+//                     <td>${squad.position}</td>
+//                     <td>${squad.nationality}</td>
+//                     <td>${squad.role}</td>
+//                 </tr>
+//         `;
+//     });
+
+//      teamDetailsElement.innerHTML = `
+//                 <div class="center-align">
+//                     <img src="${team.crestUrl.replace(/^http:\/\//i, 'https://')}" width="100px" alt="badge"/>
+//                     <h4 class="header center orange-text">${team.name}</h4>
+//                 </div>
+
+//                 <div class="card" style="padding-left: 24px; padding-right: 24px; margin-top: 30px;">
+
+//                 <table class="centered responsive-table">
+//                     <thead>
+//                         <tr>
+//                             <th>Name</th>
+//                             <th>Founded</th>
+//                             <th>Club Colors</th>
+//                             <th>Venue</th>
+//                         </tr>
+//                     </thead>
+//                     <tbody id="details">
+//                         <tr>
+//                             <td>${team.name}</td>
+//                             <td>${team.founded}</td>
+//                             <td>${team.clubColors}</td>
+//                             <td>${team.venue}</td>
+//                         </tr>
+//                     </tbody>
+//                 </table>
+                                
+//                 </div>
+
+//                 <div class="center-align">
+//                     <h4 class="header center orange-text">Squad</h4>
+//                 </div>
+
+//                 <div class="card" style="padding-left: 24px; padding-right: 24px; margin-top: 30px;">
+
+//                 <table class="striped responsive-table">
+//                     <thead>
+//                         <tr>
+//                             <th>Name</th>
+//                             <th>Position</th>
+//                             <th>Nationality</th>
+//                             <th>Role</th>
+//                         </tr>
+//                      </thead>
+//                     <tbody id="squads">
+//                         ${squads}
+//                     </tbody>
+//                 </table>
+                
+//                 </div>
+//     `;
+// }

@@ -47,11 +47,13 @@
       type="text/javascript"
       src="https://unpkg.com/snarkdown@1.0.2/dist/snarkdown.umd.js"
     ></script>
-    <script src="js/materialize.min.js"></script>
-    <script src="js/api.js"></script>
 
     <script src="js/idb.js"></script>
+    <script src="js/api.js"></script>
     <script src="js/db.js"></script>
+    <script src="js/materialize.min.js"></script>
+
+
 
     <script>
       // REGISTER SERVICE WORKER
@@ -80,7 +82,7 @@ document.addEventListener("DOMContentLoaded", function() {
         save.style.display = 'none';
         
         // ambil artikel lalu tampilkan
-        getSavedArticleById();
+        getSavedTeamDetails();
     } else {
         var item = getTeamDetails();
     }

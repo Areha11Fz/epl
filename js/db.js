@@ -1,6 +1,6 @@
 var dbPromised = idb.open("epl", 1, function(upgradeDb) {
     var teamsObjectStore = upgradeDb.createObjectStore("teams", {
-      keyPath: "ID"
+      keyPath: "id"
     });
     teamsObjectStore.createIndex("team_name", "team_name", {
       unique: false
@@ -13,7 +13,7 @@ var dbPromised = idb.open("epl", 1, function(upgradeDb) {
         var tx = db.transaction("teams", "readwrite");
         var store = tx.objectStore("teams");
         console.log(team);
-        store.add(team.result);
+        store.add(team);
         return tx.complete;
       })
       .then(function() {

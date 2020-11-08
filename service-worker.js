@@ -11,6 +11,7 @@ var urlsToCache = [
     "/js/idb.js",
     "/js/materialize.min.js",
     "/js/nav.js",
+    "/pages/saved.html",
     "/pages/teamlist.html",
     "/pages/standing.html",
     "/index.html",
