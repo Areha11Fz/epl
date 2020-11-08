@@ -55,7 +55,7 @@ var dbPromised = idb.open("epl", 1, function(upgradeDb) {
         .then(function(db) {
           var tx = db.transaction("teams", "readonly");
           var store = tx.objectStore("teams");
-          return store.get(id);
+          return store.get(parseInt(id));
         })
         .then(function(team) {
           resolve(team);
